@@ -1,5 +1,9 @@
 let sessionAdCount = 0;
 
+const toRemoveAdTags = ['shreddit-ad-post', 'shreddit-comments-page-ad'];
+const toRemoveAdTagsName = toRemoveAdTags.map(tag => tag.toUpperCase());
+const toRemoveAdTagsSelector = toRemoveAdTags.join(', ');
+
 function incrementAdCount(num) {
     sessionAdCount += num;
 
@@ -16,11 +20,12 @@ function removeAdNodesFrom(nodes) {
     let removedCount = 0;
 
     nodes.forEach(node => {
-        if (node.tagName === 'SHREDDIT-AD-POST') {
+        if (toRemoveAdTagsName.includes(node.tagName)) {
             node.remove();
             removedCount++;
         } else if (node.querySelectorAll) {
-            const ads = node.querySelectorAll('shreddit-ad-post');
+            const ads = node.querySelectorAll(toRemoveAdTagsSelector);
+
             ads.forEach(ad => ad.remove());
             removedCount += ads.length;
         }
@@ -32,7 +37,7 @@ function removeAdNodesFrom(nodes) {
 }
 
 // Initial cleanup
-const initialAds = document.querySelectorAll('shreddit-ad-post');
+const initialAds = document.querySelectorAll(toRemoveAdTagsSelector);
 initialAds.forEach(ad => ad.remove());
 incrementAdCount(initialAds.length);
 
